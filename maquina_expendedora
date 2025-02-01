@@ -1,0 +1,61 @@
+#Posible solucion al problema 29 de https://retosdeprogramacion.com/ejercicios/
+#Simula el funcionamiento de una máquina expendedora creando una operación
+# * que reciba dinero (array de monedas) y un número que indique la selección
+# * del producto.
+# * - El programa retornará el nombre del producto y un array con el dinero
+# *   de vuelta (con el menor número de monedas).
+# * - Si el dinero es insuficiente o el número de producto no existe,
+# *   deberá indicarse con un mensaje y retornar todas las monedas.
+# * - Si no hay dinero de vuelta, el array se retornará vacío.
+# * - Para que resulte más simple, trabajaremos en céntimos con monedas
+# *   de 5, 10, 50, 100 y 200.
+# * - Debemos controlar que las monedas enviadas estén dentro de las soportadas.
+
+def maquina_expendedora(monedas, producto):
+  #Contenido de la máquina expendedora mediante un diccionario cuya clave será el número del producto 
+  #Y los valores será otro diccionario que recogerá el nombre del producto y su precio
+    stock = {
+        "1":{'producto':"Coca Cola",
+             'precio':150},
+        "2":{'producto':"Pepsi Cola", 
+             'precio':140},
+        "3":{'producto':"Red Bull",
+             'precio':210},
+        "4":{'producto':"CacaoLat",
+             'precio':95}
+    }
+    #Funcion para validar las monedas introducidas
+    def validar_monedas(monedas):
+        monedas_validas = [5, 10, 20, 50, 100, 200]
+        #La funcion deveulve True si el array de monedas introducidas se encuentra dentro de la lista de monedas permitidas
+        return all(moneda in monedas_validas for moneda in monedas)
+            
+    #Funcion para validar el producto seleccionado
+    def validar_producto(producto, stock):
+        #Devuelve True si el número seleccionado se encuentra dentro del contenido de la máquina
+        return producto in stock
+
+    #Funcion para expedir el producto y devolver el cambio
+    def expedir_cambio(monedas, producto, stock):
+        monedas_disponibles = [200, 100, 50, 20, 10, 5]
+        monedas_cambio = []
+                
+        if not validar_monedas(monedas):
+            return "Error: monedas no válidas" 
+        if not validar_producto(producto, stock):
+            return "Error: Seleccione un producto válido"
+        if sum(monedas) < stock[producto]['precio']:
+            return "Credito insuficiente. Inserte más monedas"
+        
+        #Devolvemos el cambio en funcion del menor número de monedas
+        cambio = sum(monedas) - stock[producto]['precio']
+        for moneda in monedas_disponibles:
+            while cambio >= moneda:
+                cambio -= moneda
+                monedas_cambio.append(moneda)
+        
+        
+        return f"Su {stock[producto]['producto']}, gracias por su visita. cambio:{sum(monedas) - stock[producto]['precio']}. {monedas_cambio}"
+        
+            
+    print(expedir_cambio(monedas, producto, stock))
